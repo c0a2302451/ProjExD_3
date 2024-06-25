@@ -184,10 +184,10 @@ class Explosion:
                     pg.transform.flip(pg.image.load("fig/explosion.gif"), False, True)]
         self.rct = self.img[0].get_rect()
         self.rct.center = bomb.rct.center
-        self.life = 30
+        self.life = 100
 
     def update(self, screen:pg.Surface):
-        if self.life % 20 < 10:
+        if self.life % 50 < 25:
             screen.blit(self.img[0], self.rct)
         else:
             screen.blit(self.img[1], self.rct)
