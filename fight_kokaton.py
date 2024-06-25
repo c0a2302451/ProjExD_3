@@ -1,3 +1,4 @@
+import math  # mathモジュールの導入
 import os
 import random
 import sys
@@ -56,6 +57,7 @@ class Bird:
         self.img = __class__.imgs[(+5, 0)]
         self.rct: pg.Rect = self.img.get_rect()
         self.rct.center = xy
+        self.dire = (+5, 0)
 
     def change_img(self, num: int, screen: pg.Surface):
         """
@@ -82,6 +84,7 @@ class Bird:
             self.rct.move_ip(-sum_mv[0], -sum_mv[1])
         if not (sum_mv[0] == 0 and sum_mv[1] == 0):
             self.img = __class__.imgs[tuple(sum_mv)]
+            self.dire = sum_mv
         screen.blit(self.img, self.rct)
 
 
@@ -96,9 +99,11 @@ class Beam:
         """
         self.img = pg.image.load(f"fig/beam.png")  # ビーム画像Surfaceを生成
         self.rct = self.img.get_rect()
-        self.rct.centery = bird.rct.centery  # こうかとんの縦方向座標
-        self.rct.left = bird.rct.right  # こうかとんの右側ざ座標
-        self.vx, self.vy = +5, 0  # ビームの速度
+        self.vx, self.vy = bird.dire  # ビームの速度(こうかとんの向きに対応)
+        radian = math.atan2(-self.vy, self.vx)
+        self.img = pg.transform.rotozoom(self.img, math.degrees(radian), 1)
+        self.rct.centerx = bird.rct.centerx + bird.rct.width * self.vx / 5  # ビームの中心横座標
+        self.rct.centery = bird.rct.centery + bird.rct.height * self.vy / 5   # ビームの中心縦座標
 
     def update(self, screen: pg.Surface):
         """
@@ -146,6 +151,10 @@ class Score:
     クラスに関するクラス
     """
     def __init__(self):
+        """
+        Scoreテキストの初期状態
+        引数なし
+        """
         self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
         self.color = (0, 0, 255)
         self.score = 0
@@ -154,6 +163,10 @@ class Score:
         self.rct.center = 100, HEIGHT-50
 
     def update(self, screen: pg.Surface):
+        """
+        Score更新
+        引数 screen：画面Surface
+        """
         self.img = self.fonto.render(f"Score:{self.score}", 0, self.color)
         screen.blit(self.img, self.rct)
 
@@ -163,6 +176,10 @@ class Explosion:
     爆発エフェクトに関するクラス
     """
     def __init__(self, bomb: Bomb):
+        """
+        爆弾Surfaceを生成する
+        引数 bomb：爆弾（Bombインスタンス）
+        """
         self.img = [pg.transform.flip(pg.image.load("fig/explosion.gif"), True, False),
                     pg.transform.flip(pg.image.load("fig/explosion.gif"), False, True)]
         self.rct = self.img[0].get_rect()
