@@ -250,7 +250,6 @@ def main():
         explosions = [explosion for explosion in explosions if explosion.life > 0]
           # 0より大きいExplosionインスタンスだけのリスト
         
-
         bird.update(key_lst, screen)  # こうかとんの更新
         for beam in beams:  # beamリスト内のもののみ
             beam.update(screen)  # ビームの更新
