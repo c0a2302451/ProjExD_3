@@ -230,18 +230,18 @@ def main():
                 return
             
         for i, bomb in enumerate(bombs):
-            if len(beams) > 0:  # beamsリストのNoneType解消
-                for j, beam in enumerate(beams):
-                    if beam is not None:
-                        if beam.rct.colliderect(bomb.rct):
+            # if len(beams) > 0:  # beamsリストのNoneType解消
+            for j, beam in enumerate(beams):
+                if beam is not None:
+                    if beam.rct.colliderect(bomb.rct):
                             # 爆弾とビームの衝突判定
-                            bombs[i] = None
-                            beams[j] = None
-                            score.score += 1
-                            explosions.append(Explosion(bomb))
-                            bird.change_img(6, screen)
-                        if check_bound(beam.rct) != (True, True):  # ビームが画面外に行ったとき
-                            beams[j] = None
+                        bombs[i] = None
+                        beams[j] = None
+                        score.score += 1
+                        explosions.append(Explosion(bomb))
+                        bird.change_img(6, screen)
+                    if check_bound(beam.rct) != (True, True):  # ビームが画面外に行ったとき
+                        beams[j] = None
 
         key_lst = pg.key.get_pressed()
 
