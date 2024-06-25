@@ -180,8 +180,8 @@ class Explosion:
         爆弾Surfaceを生成する
         引数 bomb：爆弾（Bombインスタンス）
         """
-        self.img = [pg.transform.flip(pg.image.load("fig/explosion.gif"), True, False),
-                    pg.transform.flip(pg.image.load("fig/explosion.gif"), False, True)]
+        self.img = [pg.transform.flip(pg.image.load("fig/explosion.gif"), False, False),
+                    pg.transform.flip(pg.image.load("fig/explosion.gif"), True, True)]
         self.rct = self.img[0].get_rect()
         self.rct.center = bomb.rct.center
         self.life = 100
