@@ -159,19 +159,26 @@ def main():
                 beam = Beam(bird)  # Beamインスタンス作成            
         screen.blit(bg_img, [0, 0])
         
-        if bird.rct.colliderect(bomb.rct):
-            # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
-            bird.change_img(8, screen)
-            pg.display.update()
-            time.sleep(1)
-            return
+        if bomb is not None:
+            if bird.rct.colliderect(bomb.rct):
+                # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
+                bird.change_img(8, screen)
+                pg.display.update()
+                time.sleep(1)
+                return
+        if bomb is not None and beam is not None: 
+            if bomb.rct.colliderect(beam.rct):
+                # 爆弾とビームの衝突判定
+                bomb = None
+                beam = None
 
         key_lst = pg.key.get_pressed()
 
         bird.update(key_lst, screen)  # こうかとんの更新
-        if beam is not None:
+        if beam is not None:  # beam, None check
             beam.update(screen)  # ビームの更新
-        bomb.update(screen)  # 爆弾の更新
+        if bomb is not None:  # bomb, None check
+            bomb.update(screen)  # 爆弾の更新
         pg.display.update()
         tmr += 1
         clock.tick(50)
