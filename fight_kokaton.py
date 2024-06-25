@@ -158,6 +158,25 @@ class Score:
         screen.blit(self.img, self.rct)
 
 
+class Explosion:
+    """
+    爆発エフェクトに関するクラス
+    """
+    def __init__(self, bomb: Bomb):
+        self.img = [pg.transform.flip(pg.image.load("fig/explosion.gif"), True, False),
+                    pg.transform.flip(pg.image.load("fig/explosion.gif"), False, True)]
+        self.rct = self.img[0].get_rect()
+        self.rct.center = bomb.rct.center
+        self.life = 30
+
+    def update(self, screen:pg.Surface):
+        if self.life % 20 < 10:
+            screen.blit(self.img[0], self.rct)
+        else:
+            screen.blit(self.img[1], self.rct)
+        self.life -= 1
+
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -168,6 +187,7 @@ def main():
     # bomb = Bomb((255, 0, 0), 10)
     bombs = [Bomb((255, 0, 0), 10) for i in range(NUM_OF_BOMBS)]
     score = Score()
+    explosions = []
     clock = pg.time.Clock()
     tmr = 0
 
@@ -193,7 +213,7 @@ def main():
                 return
             
         for i, bomb in enumerate(bombs):
-            if len(beams) > 0:
+            if len(beams) > 0:  # beamsリストのNoneType解消
                 for j, beam in enumerate(beams):
                     if beam is not None:
                         if beam.rct.colliderect(bomb.rct):
@@ -201,6 +221,7 @@ def main():
                             bombs[i] = None
                             beams[j] = None
                             score.score += 1
+                            explosions.append(Explosion(bomb))
                             bird.change_img(6, screen)
                         if check_bound(beam.rct) != (True, True):  # ビームが画面外に行ったとき
                             beams[j] = None
@@ -209,12 +230,17 @@ def main():
 
         bombs = [bomb for bomb in bombs if bomb is not None]  # Noneの値を削除
         beams = [beam for beam in beams if beam is not None]  # Noneの値を削除
+        explosions = [explosion for explosion in explosions if explosion.life > 0]
+          # 0より大きいExplosionインスタンスだけのリスト
+        
 
         bird.update(key_lst, screen)  # こうかとんの更新
         for beam in beams:  # beamリスト内のもののみ
             beam.update(screen)  # ビームの更新
         for bomb in bombs:  # bombリスト内のもののみ
             bomb.update(screen)  # 爆弾の更新
+        for explosion in explosions:
+            explosion.update(screen)
         score.update(screen)
         pg.display.update()
         tmr += 1
